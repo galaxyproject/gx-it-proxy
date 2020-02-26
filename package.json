@@ -10,6 +10,9 @@
     "type": "git",
     "url": "git://github.com/usegalaxy-eu/gie-nodejs-proxy"
   },
+  "scripts": {
+    "test": "mocha --reporter spec"
+  },
   "dependencies": {
     "commander": "~2.19.0",
     "eventemitter3": "3.1.0",
