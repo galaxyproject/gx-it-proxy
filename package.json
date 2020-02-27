@@ -21,9 +21,10 @@
     "sqlite3": "4.0.4"
   },
   "devDependencies": {
-    "mocha": "*",
-    "chai": "*",
     "axios": "*",
-    "axios-retry": "*"
+    "axios-retry": "*",
+    "chai": "*",
+    "mocha": "*",
+    "prettier": "1.19.1"
   }
 }
