@@ -21,6 +21,9 @@
     "sqlite3": "4.0.4"
   },
   "devDependencies": {
-    "mocha": "2"
+    "mocha": "*",
+    "chai": "*",
+    "axios": "*",
+    "axios-retry": "*"
   }
 }
