@@ -13,7 +13,8 @@
   "scripts": {
     "test": "mocha --reporter spec",
     "lint": "eslint lib test",
-    "format": "prettier --write lib/*js test/*js"
+    "format": "prettier --write lib/*js test/*js",
+    "format-check": "prettier --check lib/*js test/*js"
   },
   "dependencies": {
     "commander": "~2.19.0",
