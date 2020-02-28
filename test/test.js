@@ -87,12 +87,12 @@ const useTestServer = function() {
 };
 
 const verifyProxyOnPort = async function(port, headers) {
-    let res = await axios.get(`http://localhost:${port}/README.md`, {
-        headers: headers
-    });
-    let { data } = res;
-    data.should.include("# A dynamic configurable reverse proxy");
-}
+  let res = await axios.get(`http://localhost:${port}/README.md`, {
+    headers: headers
+  });
+  let { data } = res;
+  data.should.include("# A dynamic configurable reverse proxy");
+};
 
 describe("test server", function() {
   useTestServer();
@@ -179,8 +179,8 @@ describe("Main function", function() {
   it("should parse simple arguments and start proxy", async function() {
     const proxy = main(["nodejs", "coolproxy", "--port", "5200", "--verbose"]);
     const headers = {
-        "x-interactive-tool-host": "localhost",
-        "x-interactive-tool-port": TEST_PORT
+      "x-interactive-tool-host": "localhost",
+      "x-interactive-tool-port": TEST_PORT
     };
     await verifyProxyOnPort(5200, headers);
     proxy.close();
