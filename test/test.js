@@ -1,3 +1,4 @@
+const { main } = require("../lib/main");
 const { DynamicProxy } = require("../lib/proxy");
 const http = require("http");
 const url = require("url");
@@ -85,13 +86,18 @@ const useTestServer = function() {
   });
 };
 
+const verifyProxyOnPort = async function(port, headers) {
+    let res = await axios.get(`http://localhost:${port}/README.md`, {
+        headers: headers
+    });
+    let { data } = res;
+    data.should.include("# A dynamic configurable reverse proxy");
+}
+
 describe("test server", function() {
   useTestServer();
   it("should serve direct requests as files", async function() {
-    let res = await axios.get(`http://localhost:${TEST_PORT}/README.md`);
-    let { data } = res;
-    console.log(data);
-    data.should.include("# A dynamic configurable reverse proxy");
+    await verifyProxyOnPort(TEST_PORT, {});
   });
 });
 
@@ -107,11 +113,8 @@ describe("DynamicProxy", function() {
         "x-interactive-tool-host": "localhost",
         "x-interactive-tool-port": TEST_PORT
       };
-      let res = await axios.get(`http://localhost:5098/README.md`, {
-        headers: headers
-      });
-      let { data } = res;
-      data.should.include("# A dynamic configurable reverse proxy");
+      await verifyProxyOnPort(5098, headers);
+      proxy.close();
     });
   });
 
@@ -135,11 +138,8 @@ describe("DynamicProxy", function() {
       const headers = {
         host: "coolkey-cooltoken.usegalaxy.org"
       };
-      let res = await axios.get(`http://localhost:5099/README.md`, {
-        headers: headers
-      });
-      let { data } = res;
-      data.should.include("# A dynamic configurable reverse proxy");
+      await verifyProxyOnPort(5099, headers);
+      proxy.close();
     });
   });
 
@@ -167,11 +167,22 @@ describe("DynamicProxy", function() {
       const headers = {
         host: "coolkey-cooltoken.usegalaxy.org"
       };
-      let res = await axios.get(`http://localhost:5100/README.md`, {
-        headers: headers
-      });
-      let { data } = res;
-      data.should.include("# A dynamic configurable reverse proxy");
+      await verifyProxyOnPort(5100, headers);
+      innerProxy.close();
+      outerProxy.close();
     });
+  });
+});
+
+describe("Main function", function() {
+  useTestServer();
+  it("should parse simple arguments and start proxy", async function() {
+    const proxy = main(["nodejs", "coolproxy", "--port", "5200", "--verbose"]);
+    const headers = {
+        "x-interactive-tool-host": "localhost",
+        "x-interactive-tool-port": TEST_PORT
+    };
+    await verifyProxyOnPort(5200, headers);
+    proxy.close();
   });
 });
