@@ -1,8 +1,13 @@
 {
-  "name": "galaxy-proxy",
-  "version": "0.0.2",
-  "description": "A dynamic reverse proxy for use within Galaxy",
-  "main": "index.js",
+  "name": "gx-it-proxy",
+  "version": "0.0.3",
+  "description": "A dynamic reverse proxy for Interactive Tools in Galaxy",
+  "main": "lib/main.js",
+  "bin": { "gx-it-proxy": "lib/main.js" },
+  "keywords": [
+    "galaxy",
+    "proxy"
+  ],
   "author": "Galaxy Project",
   "license": "MIT",
   "readmeFilename": "README.md",
