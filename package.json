@@ -11,7 +11,9 @@
     "url": "git://github.com/usegalaxy-eu/gie-nodejs-proxy"
   },
   "scripts": {
-    "test": "mocha --reporter spec"
+    "test": "mocha --reporter spec",
+    "lint": "eslint lib test",
+    "format": "prettier --write lib/*js test/*js"
   },
   "dependencies": {
     "commander": "~2.19.0",
@@ -24,6 +26,8 @@
     "axios": "*",
     "axios-retry": "*",
     "chai": "*",
+    "eslint": "^6.8.0",
+    "eslint-config-strongloop": "^2.1.0",
     "mocha": "*",
     "prettier": "1.19.1"
   }

@@ -1,9 +1,8 @@
-var main = require("../lib/main");
-var { DynamicProxy } = require("../lib/proxy");
-var http = require("http");
-var url = require("url");
-var path = require("path");
-var fs = require("fs");
+const { DynamicProxy } = require("../lib/proxy");
+const http = require("http");
+const url = require("url");
+const path = require("path");
+const fs = require("fs");
 require("chai").should();
 const axios = require("axios");
 const axiosRetry = require("axios-retry");
@@ -66,14 +65,14 @@ const testServer = http.createServer(function(req, res) {
   });
 });
 
-async function waitForServer(server, listening) {
-  while (true) {
+const waitForServer = async function(server, listening) {
+  for (;;) {
     if (server.listening == listening) {
       return;
     }
     await null; // prevents app from hanging
   }
-}
+};
 
 const useTestServer = function() {
   before(async function() {
@@ -104,7 +103,7 @@ describe("DynamicProxy", function() {
       proxy.listen();
       // This never becomes True for the proxy server... why?
       // await waitForServer(proxy.proxy, true);
-      headers = {
+      const headers = {
         "x-interactive-tool-host": "localhost",
         "x-interactive-tool-port": TEST_PORT
       };
@@ -133,7 +132,7 @@ describe("DynamicProxy", function() {
         sessionMap: sessionMap
       });
       proxy.listen();
-      headers = {
+      const headers = {
         host: "coolkey-cooltoken.usegalaxy.org"
       };
       let res = await axios.get(`http://localhost:5099/README.md`, {
@@ -165,7 +164,7 @@ describe("DynamicProxy", function() {
       const innerProxy = new DynamicProxy({ port: 5101, verbose: true });
       outerProxy.listen();
       innerProxy.listen();
-      headers = {
+      const headers = {
         host: "coolkey-cooltoken.usegalaxy.org"
       };
       let res = await axios.get(`http://localhost:5100/README.md`, {
