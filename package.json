@@ -1,14 +1,25 @@
 {
-  "name": "galaxy-proxy",
-  "version": "0.0.1",
-  "description": "A dynamic reverse proxy for use within Galaxy",
-  "main": "index.js",
-  "author": "John Chilton",
-  "license": "AFL-3.0",
+  "name": "gx-it-proxy",
+  "version": "0.0.3",
+  "description": "A dynamic reverse proxy for Interactive Tools in Galaxy",
+  "main": "lib/main.js",
+  "bin": { "gx-it-proxy": "lib/main.js" },
+  "keywords": [
+    "galaxy",
+    "proxy"
+  ],
+  "author": "Galaxy Project",
+  "license": "MIT",
   "readmeFilename": "README.md",
   "repository": {
-    "type": "mercurial",
-    "url": "https://bitbucket.org/galaxy/galaxy-central"
+    "type": "git",
+    "url": "git://github.com/usegalaxy-eu/gie-nodejs-proxy"
+  },
+  "scripts": {
+    "test": "mocha --reporter spec",
+    "lint": "eslint lib test",
+    "format": "prettier --write lib/*js test/*js",
+    "format-check": "prettier --check lib/*js test/*js"
   },
   "dependencies": {
     "commander": "~2.19.0",
@@ -16,5 +27,14 @@
     "http-proxy": "1.17.0",
     "node-watch": "0.6.2",
     "sqlite3": "4.0.4"
+  },
+  "devDependencies": {
+    "axios": "*",
+    "axios-retry": "*",
+    "chai": "*",
+    "eslint": "^6.8.0",
+    "eslint-config-strongloop": "^2.1.0",
+    "mocha": "*",
+    "prettier": "1.19.1"
   }
 }
