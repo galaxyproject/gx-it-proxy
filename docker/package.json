@@ -1,0 +1,20 @@
+{
+  "name": "gx-it-proxy-wrapper",
+  "version": "0.0.3",
+  "keywords": [
+    "galaxy",
+    "proxy"
+  ],
+  "author": "Galaxy Project",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/usegalaxy-eu/gie-nodejs-proxy"
+  },
+  "scripts": {
+    "it-proxy": "gx-it-proxy"
+  },
+  "dependencies": {
+    "gx-it-proxy": "*"
+  }
+}
