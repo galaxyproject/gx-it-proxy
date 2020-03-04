@@ -7,16 +7,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2 # Checking out the repo
-    - name: Docker Login
-      uses: azure/docker-login@v1
-      with:
-        login-server: docker.pkg.github.com
-        username: $GITHUB_ACTOR
-        password: ${{ secrets.GITHUB_TOKEN }}
     - name: Publish to Registry
       uses: elgohr/Publish-Docker-Github-Action@master
       with:
-        name: galaxyproject/gx-it-proxy
+        name: galaxy/gx-it-proxy
         workdir: docker
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_PASSWORD }}
