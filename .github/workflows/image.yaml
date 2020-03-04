@@ -7,11 +7,17 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2 # Checking out the repo
-
-    - name: Build and Publish head Docker image
-      uses: VaultVulp/gp-docker-action@1.0.1
-      working-directory: ./docker
+    - name: Docker Login
+      uses: azure/docker-login@v1
       with:
-        github-token: ${{ secrets.GITHUB_TOKEN }} # Provide GITHUB_TOKEN to login into the GitHub Packages
-        image-name: proxy # Provide Docker image name
-        image-tag: head # Provide Docker image tag
+        login-server: docker.pkg.github.com
+        username: $GITHUB_ACTOR
+        password: ${{ secrets.GITHUB_TOKEN }}
+    - name: Publish to Registry
+      uses: elgohr/Publish-Docker-Github-Action@master
+      with:
+        name: galaxyproject/gx-it-proxy/proxy
+        registry: docker.pkg.github.com
+        workdir: docker
+
+
