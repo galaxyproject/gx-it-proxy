@@ -16,9 +16,8 @@ jobs:
     - name: Publish to Registry
       uses: elgohr/Publish-Docker-Github-Action@master
       with:
-        name: galaxyproject/gx-it-proxy/proxy
-        registry: docker.pkg.github.com
+        name: galaxyproject/gx-it-proxy
         workdir: docker
-        username: $GITHUB_ACTOR
-        password: ${{ secrets.GITHUB_TOKEN }}
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
