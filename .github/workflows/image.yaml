@@ -19,5 +19,6 @@ jobs:
         name: galaxyproject/gx-it-proxy/proxy
         registry: docker.pkg.github.com
         workdir: docker
-
+        username: $GITHUB_ACTOR
+        password: ${{ secrets.GITHUB_TOKEN }}
 
