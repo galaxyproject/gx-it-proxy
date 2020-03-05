@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/name: running-it-container
+  name: running-it-container
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: running-it-container
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: running-it-container
+    spec:
+      containers:
+      - image: strm/helloworld-http
+        name: running-it-container
+        ports:
+        - containerPort: 80
