@@ -118,6 +118,18 @@ describe("DynamicProxy", function() {
     });
   });
 
+  describe("x-interactive-tool-target headers", function() {
+    it("should respect host and port in one header", async function() {
+      const proxy = new DynamicProxy({ port: 5097, verbose: true });
+      proxy.listen();
+      const headers = {
+        "x-interactive-tool-host": "localhost:" + TEST_PORT
+      };
+      await verifyProxyOnPort(5097, headers);
+      proxy.close();
+    });
+  });
+
   describe("map based forwarding", function() {
     it("should respect session map", async function() {
       const sessionMap = {
