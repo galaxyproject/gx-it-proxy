@@ -4,7 +4,8 @@
   "description": "A dynamic reverse proxy for Interactive Tools in Galaxy",
   "main": "lib/main.js",
   "bin": {
-    "gx-it-proxy": "lib/main.js"
+    "gx-it-proxy": "lib/main.js",
+    "gx-it-proxy-create-db": "lib/createdb.js"
   },
   "keywords": [
     "galaxy",
