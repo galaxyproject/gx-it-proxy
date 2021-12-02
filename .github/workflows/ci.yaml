@@ -10,6 +10,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    - run: node --version
     - uses: borales/actions-yarn@v2.0.0
       with:
         cmd: install
