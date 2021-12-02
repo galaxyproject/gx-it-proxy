@@ -29,13 +29,13 @@
     "eventemitter3": "3.1.0",
     "http-proxy": "1.18.1",
     "node-watch": "0.6.2",
-    "sqlite3": "4.0.4"
+    "sqlite3": "5.0.2"
   },
   "devDependencies": {
     "axios": "*",
     "axios-retry": "*",
     "chai": "*",
-    "eslint": "^6.8.0",
+    "eslint": "^8.1.0",
     "eslint-config-strongloop": "^2.1.0",
     "mocha": "*",
     "prettier": "1.19.1"
