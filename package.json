@@ -35,7 +35,7 @@
     "axios": "*",
     "axios-retry": "*",
     "chai": "*",
-    "eslint": "^8.1.0",
+    "eslint": "^8.3.0",
     "eslint-config-strongloop": "^2.1.0",
     "mocha": "*",
     "prettier": "1.19.1"
