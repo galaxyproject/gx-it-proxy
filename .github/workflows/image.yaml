@@ -3,7 +3,7 @@ on: [push]
 jobs:
   build-and-publish-head:
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/master' # Running this job only for develop branch
+    if: github.ref == 'refs/heads/main' # Running this job only for develop branch
 
     steps:
     - uses: actions/checkout@v2 # Checking out the repo
