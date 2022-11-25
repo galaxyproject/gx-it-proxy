@@ -86,8 +86,8 @@ const useTestServer = function() {
   });
 };
 
-const verifyProxyOnPort = async function(port, headers) {
-  let res = await axios.get(`http://localhost:${port}/README.md`, {
+const verifyProxyOnPort = async function(port, headers, path='/README.md') {
+  let res = await axios.get(`http://localhost:${port}${path}`, {
     headers: headers
   });
   let { data } = res;
@@ -130,7 +130,7 @@ describe("DynamicProxy", function() {
     });
   });
 
-  describe("map based forwarding", function() {
+  describe("map based forwarding using subdomain", function() {
     it("should respect session map", async function() {
       const sessionMap = {
         coolkey: {
@@ -154,6 +154,33 @@ describe("DynamicProxy", function() {
       proxy.close();
     });
   });
+
+  describe("map based forwarding using path", function() {
+  it("should respect session map", async function() {
+    const sessionMap = {
+      coolkey: {
+        token: "cooltoken",
+        target: {
+          host: "localhost",
+          port: TEST_PORT
+        }
+      }
+    };
+    const proxy = new DynamicProxy({
+      port: 5099,
+      verbose: true,
+      sessionMap: sessionMap,
+      proxyPathPrefix: '/interactivetool/access/interactivetoolentrypoint',
+    });
+    proxy.listen();
+    const headers = {
+      host: "usegalaxy.org",
+    };
+    const path = "/interactivetool/access/interactivetoolentrypoint/coolkey/cooltoken/README.md"
+    await verifyProxyOnPort(5099, headers, path);
+    proxy.close();
+  });
+});
 
   describe("double proxying", function() {
     it("should proxy across two servers", async function() {
