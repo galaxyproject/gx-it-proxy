@@ -8,7 +8,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2 # Checking out the repo
     - name: Publish to Registry
-      uses: elgohr/Publish-Docker-Github-Action@master
+      uses: elgohr/Publish-Docker-Github-Action@v5
       with:
         name: galaxy/gx-it-proxy
         workdir: docker
