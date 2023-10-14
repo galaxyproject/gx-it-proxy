@@ -38,6 +38,6 @@
     "eslint": "^8.3.0",
     "eslint-config-strongloop": "^2.1.0",
     "mocha": "*",
-    "prettier": "1.19.1"
+    "prettier": "^3.0.3"
   }
 }
