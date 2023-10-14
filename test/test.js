@@ -245,6 +245,46 @@ describe("DynamicProxy", function () {
     });
   });
 
+  describe("map based path forwarding to top-level path with entry point path in header", function () {
+    it(
+      'should respect session map with requires_path_in_header_named="X-My-Header", strip entry point path from ' +
+        'url and instead provide it in header "X-My-Header"',
+      async function () {
+        const sessionMap = {
+          coolkey: {
+            token: "cooltoken",
+            target: {
+              host: "localhost",
+              port: TEST_PORT,
+            },
+            requires_path_in_header_named: "X-My-Header",
+          },
+        };
+        const proxy = new DynamicProxy({
+          port: 5103,
+          verbose: true,
+          sessionMap: sessionMap,
+          proxyPathPrefix: "/interactivetool/ep",
+        });
+        proxy.listen();
+        const headers = {
+          host: "usegalaxy.org",
+        };
+
+        proxy.proxy.on("proxyReq", function (proxyReq) {
+          proxyReq
+            .getHeader("X-My-Header")
+            .should.equal("/interactivetool/ep/coolkey/cooltoken");
+        });
+
+        const path =
+          "/interactivetool/ep/coolkey/cooltoken/test_data/extradir/README.md";
+        await verifyProxyOnPort(5103, headers, path);
+        proxy.close();
+      },
+    );
+  });
+
   describe("double proxying", function () {
     it("should proxy across two servers", async function () {
       const sessionMap = {
