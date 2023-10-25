@@ -6,23 +6,27 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [14.x, 16.x]
+        node: [14.x, 16.x, 18/x]
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
+    - name: Set Node.js version
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ strategy.node }}
     - run: node --version
-    - uses: borales/actions-yarn@v2.0.0
+    - uses: borales/actions-yarn@v4
       with:
         cmd: install
     #- uses: borales/actions-yarn@v2.0.0
     #  with:
     #      cmd: build
-    - uses: borales/actions-yarn@v2.0.0
+    - uses: borales/actions-yarn@v4
       with:
           cmd: lint
-    - uses: borales/actions-yarn@v2.0.0
+    - uses: borales/actions-yarn@v4
       with:
           cmd: format-check
-    - uses: borales/actions-yarn@v2.0.0
+    - uses: borales/actions-yarn@v4
       with:
           cmd: test
