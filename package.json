@@ -1,6 +1,6 @@
 {
   "name": "gx-it-proxy",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "A dynamic reverse proxy for Interactive Tools in Galaxy",
   "main": "lib/main.js",
   "bin": {
