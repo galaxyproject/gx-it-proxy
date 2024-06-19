@@ -33,12 +33,12 @@
     "sqlite3": "5.1.2"
   },
   "devDependencies": {
-    "axios": "*",
-    "axios-retry": "*",
-    "chai": "*",
+    "axios": "^1.7",
+    "axios-retry": "^3",
+    "chai": "^4",
     "eslint": "^8.3.0",
     "eslint-config-strongloop": "^2.1.0",
-    "mocha": "*",
+    "mocha": "^10.4",
     "prettier": "^3.0.3"
   }
 }
