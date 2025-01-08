@@ -35,10 +35,9 @@
   "devDependencies": {
     "axios": "^1.7",
     "axios-retry": "^4",
-    "chai": "^5",
     "eslint": "^9.17.0",
     "eslint-config-strongloop": "^2.1.0",
-    "mocha": "^11.0",
-    "prettier": "^3.4.2"
+    "prettier": "^3.4.2",
+    "vitest": "^2.1.8"
   }
 }
