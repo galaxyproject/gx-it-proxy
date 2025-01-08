@@ -19,7 +19,7 @@
     "url": "git://github.com/usegalaxy-eu/gie-nodejs-proxy"
   },
   "scripts": {
-    "test": "mocha --reporter spec",
+    "test": "vitest",
     "lint": "eslint lib test",
     "format": "prettier --no-config --write lib/*js test/*js",
     "format-check": "prettier --no-config --check lib/*js test/*js"
