@@ -6,4 +6,5 @@ export default [
   { files: ["**/*.js"] },
   { languageOptions: { globals: globals.node } },
   pluginJs.configs.recommended,
+  { rules: { "no-unused-vars": ["error", { "argsIgnorePattern": "^_" }]} },
 ];
