@@ -13,6 +13,7 @@
   ],
   "author": "Galaxy Project",
   "license": "MIT",
+  "type": "module",
   "readmeFilename": "README.md",
   "repository": {
     "type": "git",
