@@ -1,14 +1,15 @@
-const { main } = require("../lib/main");
-const { DynamicProxy } = require("../lib/proxy");
-const http = require("http");
-const url = require("url");
-const path = require("path");
-const fs = require("fs");
-require("chai").should();
-const axios = require("axios");
-const axiosRetry = require("axios-retry");
+import { describe, it, beforeAll, afterAll, expect } from "vitest";
+import http from "http";
+import url from "url";
+import path from "path";
+import fs from "fs";
+import axios from "axios";
+import axiosRetry from "axios-retry";
 
-// Needed because I can't figure out how to wait on the proxy server to get
+import { main } from "../lib/main.js";
+import { DynamicProxy } from "../lib/proxy.js";
+
+// Needed because we can’t figure out how to wait on the proxy server to get
 // setup (server.listening stays false forever). This greatly reduces transient
 // connection refused errors as a result.
 axiosRetry(axios, { retries: 3 });
@@ -49,8 +50,10 @@ const testServer = http.createServer(function (req, res) {
       return;
     }
 
-    // if is a directory search for index file matching the extention
-    if (fs.statSync(pathname).isDirectory()) pathname += "/index" + ext;
+    // if is a directory, search for index file matching the extension
+    if (fs.statSync(pathname).isDirectory()) {
+      pathname += "/index" + ext;
+    }
 
     // read file from file system
     fs.readFile(pathname, function (err, data) {
@@ -68,70 +71,78 @@ const testServer = http.createServer(function (req, res) {
 
 const waitForServer = async function (server, listening) {
   for (;;) {
-    if (server.listening == listening) {
+    if (server.listening === listening) {
       return;
     }
-    await null; // prevents app from hanging
+    // prevents app from hanging
+    await null;
   }
 };
 
 const useTestServer = function () {
-  before(async function () {
+  beforeAll(async () => {
     testServer.listen(TEST_PORT);
     await waitForServer(testServer, true);
   });
-  after(async function () {
+
+  afterAll(async () => {
     testServer.close();
     await waitForServer(testServer, false);
   });
 };
 
 const verifyProxyOnPort = async function (port, headers, path = "/README.md") {
-  let res = await axios.get(`http://localhost:${port}${path}`, {
-    headers: headers,
-  });
-  let { data } = res;
-  data.should.include("# A dynamic configurable reverse proxy");
+  const res = await axios.get(`http://localhost:${port}${path}`, { headers });
+  const { data } = res;
+  expect(data).toContain("# A dynamic configurable reverse proxy");
 };
 
-describe("test server", function () {
+// --------------------------------------------------------------
+// TESTS
+// --------------------------------------------------------------
+
+describe("test server", () => {
   useTestServer();
-  it("should serve direct requests as files", async function () {
+
+  it("should serve direct requests as files", async () => {
     await verifyProxyOnPort(TEST_PORT, {});
   });
 });
 
-describe("DynamicProxy", function () {
+describe("DynamicProxy", () => {
   useTestServer();
-  describe("x-interactive-tool-* headers", function () {
-    it("should respect host and port", async function () {
+
+  describe("x-interactive-tool-* headers", () => {
+    it("should respect host and port", async () => {
       const proxy = new DynamicProxy({ port: 5098, verbose: true });
       proxy.listen();
-      // This never becomes True for the proxy server... why?
-      // await waitForServer(proxy.proxy, true);
+
       const headers = {
         "x-interactive-tool-host": "localhost",
         "x-interactive-tool-port": TEST_PORT,
       };
       await verifyProxyOnPort(5098, headers);
+
       proxy.close();
     });
   });
 
-  describe("x-interactive-tool-target headers", function () {
-    it("should respect host and port in one header", async function () {
+  describe("x-interactive-tool-target headers", () => {
+    it("should respect host and port in one header", async () => {
       const proxy = new DynamicProxy({ port: 5097, verbose: true });
       proxy.listen();
+
       const headers = {
         "x-interactive-tool-host": "localhost:" + TEST_PORT,
       };
       await verifyProxyOnPort(5097, headers);
+
       proxy.close();
     });
   });
 
-  describe("map based forwarding using subdomain", function () {
-    it("should respect session map", async function () {
+  describe("map based forwarding using subdomain", () => {
+    it("should respect session map", async () => {
       const sessionMap = {
         coolkey: {
           token: "cooltoken",
@@ -144,19 +155,21 @@ describe("DynamicProxy", function () {
       const proxy = new DynamicProxy({
         port: 5099,
         verbose: true,
-        sessionMap: sessionMap,
+        sessionMap,
       });
       proxy.listen();
+
       const headers = {
         host: "coolkey-cooltoken.usegalaxy.org",
       };
       await verifyProxyOnPort(5099, headers);
+
       proxy.close();
     });
   });
 
-  describe("map based path forwarding to full path", function () {
-    it("should respect session map with requires_path_in_url=true and leave path unmodified", async function () {
+  describe("map based path forwarding to full path", () => {
+    it("should respect session map with requires_path_in_url=true and leave path unmodified", async () => {
       const sessionMap = {
         coolkey: {
           token: "cooltoken",
@@ -170,22 +183,24 @@ describe("DynamicProxy", function () {
       const proxy = new DynamicProxy({
         port: 5100,
         verbose: true,
-        sessionMap: sessionMap,
+        sessionMap,
         proxyPathPrefix: "/test_data/interactivetool/ep",
       });
       proxy.listen();
+
       const headers = {
         host: "usegalaxy.org",
       };
       const path =
         "/test_data/interactivetool/ep/coolkey/cooltoken/extradir/README.md";
       await verifyProxyOnPort(5100, headers, path);
+
       proxy.close();
     });
   });
 
-  describe("map based path forwarding to top-level path (default)", function () {
-    it("should respect session map without requires_path_in_url and strip entry point path from url", async function () {
+  describe("map based path forwarding to top-level path (default)", () => {
+    it("should respect session map without requires_path_in_url and strip entry point path from url", async () => {
       const sessionMap = {
         coolkey: {
           token: "cooltoken",
@@ -198,10 +213,11 @@ describe("DynamicProxy", function () {
       const proxy = new DynamicProxy({
         port: 5101,
         verbose: true,
-        sessionMap: sessionMap,
+        sessionMap,
         proxyPathPrefix: "/interactivetool/ep",
       });
       proxy.listen();
+
       const headers = {
         host: "usegalaxy.org",
       };
@@ -210,12 +226,13 @@ describe("DynamicProxy", function () {
       const path =
         "/interactivetool/ep/coolkey/cooltoken/test_data/extradir/README.md";
       await verifyProxyOnPort(5101, headers, path);
+
       proxy.close();
     });
   });
 
-  describe("map based path forwarding to top-level path (requires_path_in_url=false)", function () {
-    it("should respect session map with requires_path_in_url=false and strip entry point path from url", async function () {
+  describe("map based path forwarding to top-level path (requires_path_in_url=false)", () => {
+    it("should respect session map with requires_path_in_url=false and strip entry point path from url", async () => {
       const sessionMap = {
         coolkey: {
           token: "cooltoken",
@@ -229,10 +246,11 @@ describe("DynamicProxy", function () {
       const proxy = new DynamicProxy({
         port: 5102,
         verbose: true,
-        sessionMap: sessionMap,
+        sessionMap,
         proxyPathPrefix: "/interactivetool/ep",
       });
       proxy.listen();
+
       const headers = {
         host: "usegalaxy.org",
       };
@@ -241,15 +259,16 @@ describe("DynamicProxy", function () {
       const path =
         "/interactivetool/ep/coolkey/cooltoken/test_data/extradir/README.md";
       await verifyProxyOnPort(5102, headers, path);
+
       proxy.close();
     });
   });
 
-  describe("map based path forwarding to top-level path with entry point path in header", function () {
+  describe("map based path forwarding to top-level path with entry point path in header", () => {
     it(
       'should respect session map with requires_path_in_header_named="X-My-Header", strip entry point path from ' +
         'url and instead provide it in header "X-My-Header"',
-      async function () {
+      async () => {
         const sessionMap = {
           coolkey: {
             token: "cooltoken",
@@ -263,30 +282,30 @@ describe("DynamicProxy", function () {
         const proxy = new DynamicProxy({
           port: 5103,
           verbose: true,
-          sessionMap: sessionMap,
+          sessionMap,
           proxyPathPrefix: "/interactivetool/ep",
         });
         proxy.listen();
-        const headers = {
-          host: "usegalaxy.org",
-        };
 
-        proxy.proxy.on("proxyReq", function (proxyReq) {
-          proxyReq
-            .getHeader("X-My-Header")
-            .should.equal("/interactivetool/ep/coolkey/cooltoken");
+        const headers = { host: "usegalaxy.org" };
+
+        proxy.proxy.on("proxyReq", (proxyReq) => {
+          expect(proxyReq.getHeader("X-My-Header")).toBe(
+            "/interactivetool/ep/coolkey/cooltoken",
+          );
         });
 
         const path =
           "/interactivetool/ep/coolkey/cooltoken/test_data/extradir/README.md";
         await verifyProxyOnPort(5103, headers, path);
+
         proxy.close();
       },
     );
   });
 
-  describe("double proxying", function () {
-    it("should proxy across two servers", async function () {
+  describe("double proxying", () => {
+    it("should proxy across two servers", async () => {
       const sessionMap = {
         coolkey: {
           token: "cooltoken",
@@ -299,32 +318,37 @@ describe("DynamicProxy", function () {
       const outerProxy = new DynamicProxy({
         port: 5200,
         verbose: true,
-        sessionMap: sessionMap,
+        sessionMap,
         forwardIP: "localhost",
         forwardPort: 5201,
       });
       const innerProxy = new DynamicProxy({ port: 5201, verbose: true });
       outerProxy.listen();
       innerProxy.listen();
+
       const headers = {
         host: "coolkey-cooltoken.usegalaxy.org",
       };
       await verifyProxyOnPort(5200, headers);
+
       innerProxy.close();
       outerProxy.close();
     });
   });
 });
 
-describe("Main function", function () {
+describe("Main function", () => {
   useTestServer();
-  it("should parse simple arguments and start proxy", async function () {
+
+  it("should parse simple arguments and start proxy", async () => {
     const proxy = main(["nodejs", "coolproxy", "--port", "5300", "--verbose"]);
+
     const headers = {
       "x-interactive-tool-host": "localhost",
       "x-interactive-tool-port": TEST_PORT,
     };
     await verifyProxyOnPort(5300, headers);
+
     proxy.close();
   });
 });
