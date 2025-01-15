@@ -1,5 +1,5 @@
 {
-  "name": "gx-it-proxy",
+  "name": "@galaxyproject/gx-it-proxy",
   "version": "0.2.0",
   "description": "A dynamic reverse proxy for Interactive Tools in Galaxy",
   "main": "lib/main.js",
@@ -16,7 +16,7 @@
   "readmeFilename": "README.md",
   "repository": {
     "type": "git",
-    "url": "git://github.com/usegalaxy-eu/gie-nodejs-proxy"
+    "url": "git://github.com/galaxyproject/gx-it-proxy"
   },
   "scripts": {
     "test": "vitest",
