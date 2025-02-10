@@ -1,6 +1,6 @@
 {
   "name": "gx-it-proxy",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "A dynamic reverse proxy for Interactive Tools in Galaxy",
   "main": "lib/main.js",
   "bin": {
@@ -29,8 +29,10 @@
     "eventemitter3": "5.0.1",
     "http-proxy": "1.18.1",
     "node-watch": "0.7.4",
-    "pg-native": "^3.2.0",
     "sqlite3": "5.1.7"
+  },
+  "optionalDependencies": {
+    "pg-native": "^3.2.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",
