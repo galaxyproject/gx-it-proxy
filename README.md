@@ -3,13 +3,13 @@
 ## Invoking
 
 This project can be invoked from ``lib/main.js`` script in the source or
-installed and invoked through its [published package](https://www.npmjs.com/package/gx-it-proxy) via npm or npx.
+installed and invoked through its [published package](https://www.npmjs.com/package/@galaxyproject/gx-it-proxy) via npm or npx.
 
 ```console
-$ npx gx-it-proxy --version
-$ npx gx-it-proxy --sessions test.sqlite --port 8001  # use SQLite
-$ npx gx-it-proxy --sessions test.json --port 8001    # use a JSON file
-$ npx gx-it-proxy --sessions postgresql:///galaxy?host=/var/run/postgresql --port 8001  # use PostgreSQL
+$ npx @galaxyproject/gx-it-proxy --version
+$ npx @galaxyproject/gx-it-proxy --sessions test.sqlite --port 8001  # use SQLite
+$ npx @galaxyproject/gx-it-proxy --sessions test.json --port 8001    # use a JSON file
+$ npx @galaxyproject/gx-it-proxy --sessions postgresql:///galaxy?host=/var/run/postgresql --port 8001  # use PostgreSQL
 ```
 
 ## Double Proxy
