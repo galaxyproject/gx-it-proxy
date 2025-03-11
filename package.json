@@ -1,6 +1,5 @@
 {
   "name": "@galaxyproject/gx-it-proxy",
-  "name": "gx-it-proxy",
   "version": "0.2.1",
   "description": "A dynamic reverse proxy for Interactive Tools in Galaxy",
   "main": "lib/main.js",
