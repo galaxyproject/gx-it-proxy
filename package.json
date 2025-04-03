@@ -45,7 +45,13 @@
     "vitest": "^3.0.8"
   },
   "overrides": {
-    "glob": "11.0.0",
-    "node-gyp": "10.3.1"
+    "glob": "11.0.1",
+    "node-gyp": "10.3.1",
+    "rimraf": "^4.0.0",
+    "inflight": "^2.0.0",
+    "npmlog": "^7.0.0",
+    "are-we-there-yet": "^4.0.0",
+    "gauge": "^5.0.0",
+    "@npmcli/move-file": "^2.0.0"
   }
 }
