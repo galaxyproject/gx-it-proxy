@@ -1,6 +1,6 @@
 {
   "name": "@galaxyproject/gx-it-proxy",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "A dynamic reverse proxy for Interactive Tools in Galaxy",
   "main": "lib/main.js",
   "bin": {
@@ -25,27 +25,33 @@
     "format-check": "prettier --no-config --check lib/*js test/*js"
   },
   "dependencies": {
-    "commander": "~13.0.0",
+    "commander": "~13.1.0",
     "eventemitter3": "5.0.1",
     "http-proxy": "1.18.1",
     "node-watch": "0.7.4",
     "sqlite3": "5.1.7"
   },
   "optionalDependencies": {
-    "pg-native": "^3.2.0"
+    "pg-native": "^3.3.0"
   },
   "devDependencies": {
-    "@eslint/js": "^9.17.0",
-    "axios": "^1.7",
+    "@eslint/js": "^9.23.0",
+    "axios": "^1.8",
     "axios-retry": "^4",
-    "eslint": "^9.17.0",
+    "eslint": "^9.23.0",
     "eslint-config-strongloop": "^2.1.0",
-    "globals": "^15.14.0",
-    "prettier": "^3.4.2",
-    "vitest": "^2.1.8"
+    "globals": "^16.0.0",
+    "prettier": "^3.5.3",
+    "vitest": "^3.1.1"
   },
   "overrides": {
-    "glob": "11.0.0",
-    "node-gyp": "10.3.1"
+    "glob": "11.0.1",
+    "node-gyp": "10.3.1",
+    "rimraf": "^4.0.0",
+    "inflight": "^2.0.0",
+    "npmlog": "^7.0.0",
+    "are-we-there-yet": "^4.0.0",
+    "gauge": "^5.0.0",
+    "@npmcli/move-file": "^2.0.0"
   }
 }
