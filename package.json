@@ -18,6 +18,10 @@
     "type": "git",
     "url": "git://github.com/galaxyproject/gx-it-proxy"
   },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
   "scripts": {
     "test": "vitest",
     "lint": "eslint lib test",
