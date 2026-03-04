@@ -402,17 +402,13 @@ describe("Mapper", () => {
     return new Promise((resolve, reject) => {
       const db = new sqlite3.Database(dbPath, (err) => {
         if (err) return reject(err);
-        db.run(
-          "DELETE FROM gxitproxy WHERE key = ?",
-          [key],
-          (err) => {
+        db.run("DELETE FROM gxitproxy WHERE key = ?", [key], (err) => {
+          if (err) return reject(err);
+          db.close((err) => {
             if (err) return reject(err);
-            db.close((err) => {
-              if (err) return reject(err);
-              resolve();
-            });
-          },
-        );
+            resolve();
+          });
+        });
       });
     });
   };
@@ -423,7 +419,8 @@ describe("Mapper", () => {
       const start = Date.now();
       const check = () => {
         if (predicate()) return resolve();
-        if (Date.now() - start > timeoutMs) return reject(new Error("pollUntil timed out"));
+        if (Date.now() - start > timeoutMs)
+          return reject(new Error("pollUntil timed out"));
         setTimeout(check, interval);
       };
       check();
@@ -431,36 +428,60 @@ describe("Mapper", () => {
   };
 
   afterEach(() => {
-    try { fs.unlinkSync(dbPath); } catch (e) { /* ignore */ }
-    try { fs.unlinkSync(dbPath + "-wal"); } catch (e) { /* ignore */ }
-    try { fs.unlinkSync(dbPath + "-shm"); } catch (e) { /* ignore */ }
-    try { fs.unlinkSync(dbPath + "-journal"); } catch (e) { /* ignore */ }
+    try {
+      fs.unlinkSync(dbPath);
+    } catch {
+      /* ignore */
+    }
+    try {
+      fs.unlinkSync(dbPath + "-wal");
+    } catch {
+      /* ignore */
+    }
+    try {
+      fs.unlinkSync(dbPath + "-shm");
+    } catch {
+      /* ignore */
+    }
+    try {
+      fs.unlinkSync(dbPath + "-journal");
+    } catch {
+      /* ignore */
+    }
   });
 
-  it("should detect inserted rows in a sqlite file", { timeout: 15000 }, async () => {
-    await createDb();
-    const map = mapFor(dbPath);
-    expect(Object.keys(map).length).toBe(0);
+  it(
+    "should detect inserted rows in a sqlite file",
+    { timeout: 15000 },
+    async () => {
+      await createDb();
+      const map = mapFor(dbPath);
+      expect(Object.keys(map).length).toBe(0);
 
-    await insertRow("testkey1", "127.0.0.1", 8080);
-    await pollUntil(() => "testkey1" in map, 10000);
-    expect(map["testkey1"].target.host).toBe("127.0.0.1");
-    expect(map["testkey1"].target.port).toBe(8080);
+      await insertRow("testkey1", "127.0.0.1", 8080);
+      await pollUntil(() => "testkey1" in map, 10000);
+      expect(map["testkey1"].target.host).toBe("127.0.0.1");
+      expect(map["testkey1"].target.port).toBe(8080);
 
-    map._stop();
-  });
+      map._stop();
+    },
+  );
 
-  it("should detect deleted rows in a sqlite file", { timeout: 15000 }, async () => {
-    await createDb();
-    await insertRow("testkey2", "127.0.0.1", 9090);
-    const map = mapFor(dbPath);
+  it(
+    "should detect deleted rows in a sqlite file",
+    { timeout: 15000 },
+    async () => {
+      await createDb();
+      await insertRow("testkey2", "127.0.0.1", 9090);
+      const map = mapFor(dbPath);
 
-    await pollUntil(() => "testkey2" in map, 10000);
-    expect(map["testkey2"].target.port).toBe(9090);
+      await pollUntil(() => "testkey2" in map, 10000);
+      expect(map["testkey2"].target.port).toBe(9090);
 
-    await deleteRow("testkey2");
-    await pollUntil(() => !("testkey2" in map), 10000);
+      await deleteRow("testkey2");
+      await pollUntil(() => !("testkey2" in map), 10000);
 
-    map._stop();
-  });
+      map._stop();
+    },
+  );
 });
