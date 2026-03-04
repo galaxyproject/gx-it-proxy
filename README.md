@@ -51,3 +51,10 @@ FOR EACH ROW EXECUTE FUNCTION notify_gxitproxy();
 Although it is possible to disable polling using `--pollingInterval 0`, it is
 strongly discouraged, as the delivery of asynchronous notifications is not
 guaranteed.
+
+## Releasing to npm
+
+Publishing is automated via GitHub Actions using [npm trusted publishing](https://docs.npmjs.com/generating-provenance-statements#publishing-packages-with-provenance-via-github-actions) (no token required).
+
+1. Bump the version in `package.json` and commit.
+2. Create a GitHub release — the `release.yaml` workflow will run tests and publish to npm with provenance attestation.
