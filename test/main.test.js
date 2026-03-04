@@ -1,13 +1,16 @@
-import { describe, it, beforeAll, afterAll, expect } from "vitest";
+import { describe, it, beforeAll, afterAll, afterEach, expect } from "vitest";
 import http from "http";
 import url from "url";
 import path from "path";
 import fs from "fs";
+import os from "os";
 import axios from "axios";
 import axiosRetry from "axios-retry";
+import sqlite3 from "sqlite3";
 
 import { main } from "../lib/main.js";
 import { DynamicProxy } from "../lib/proxy.js";
+import { mapFor } from "../lib/mapper.js";
 
 // Needed because we can’t figure out how to wait on the proxy server to get
 // setup (server.listening stays false forever). This greatly reduces transient
@@ -350,5 +353,114 @@ describe("Main function", () => {
     await verifyProxyOnPort(5300, headers);
 
     proxy.close();
+  });
+});
+
+describe("Mapper", () => {
+  const dbPath = path.join(os.tmpdir(), `gxitproxy-test-${process.pid}.sqlite`);
+
+  const createDb = () => {
+    return new Promise((resolve, reject) => {
+      const db = new sqlite3.Database(dbPath, (err) => {
+        if (err) return reject(err);
+        db.run(
+          `CREATE TABLE IF NOT EXISTS gxitproxy
+           (key text, key_type text, token text, host text, port integer, info text,
+            PRIMARY KEY (key, key_type))`,
+          (err) => {
+            if (err) return reject(err);
+            db.close((err) => {
+              if (err) return reject(err);
+              resolve();
+            });
+          },
+        );
+      });
+    });
+  };
+
+  const insertRow = (key, host, port) => {
+    return new Promise((resolve, reject) => {
+      const db = new sqlite3.Database(dbPath, (err) => {
+        if (err) return reject(err);
+        db.run(
+          "INSERT INTO gxitproxy (key, key_type, token, host, port) VALUES (?, ?, ?, ?, ?)",
+          [key, "interactivetoolentrypoint", "tok123", host, port],
+          (err) => {
+            if (err) return reject(err);
+            db.close((err) => {
+              if (err) return reject(err);
+              resolve();
+            });
+          },
+        );
+      });
+    });
+  };
+
+  const deleteRow = (key) => {
+    return new Promise((resolve, reject) => {
+      const db = new sqlite3.Database(dbPath, (err) => {
+        if (err) return reject(err);
+        db.run(
+          "DELETE FROM gxitproxy WHERE key = ?",
+          [key],
+          (err) => {
+            if (err) return reject(err);
+            db.close((err) => {
+              if (err) return reject(err);
+              resolve();
+            });
+          },
+        );
+      });
+    });
+  };
+
+  const pollUntil = (predicate, timeoutMs) => {
+    const interval = 500;
+    return new Promise((resolve, reject) => {
+      const start = Date.now();
+      const check = () => {
+        if (predicate()) return resolve();
+        if (Date.now() - start > timeoutMs) return reject(new Error("pollUntil timed out"));
+        setTimeout(check, interval);
+      };
+      check();
+    });
+  };
+
+  afterEach(() => {
+    try { fs.unlinkSync(dbPath); } catch (e) { /* ignore */ }
+    try { fs.unlinkSync(dbPath + "-wal"); } catch (e) { /* ignore */ }
+    try { fs.unlinkSync(dbPath + "-shm"); } catch (e) { /* ignore */ }
+    try { fs.unlinkSync(dbPath + "-journal"); } catch (e) { /* ignore */ }
+  });
+
+  it("should detect inserted rows in a sqlite file", { timeout: 15000 }, async () => {
+    await createDb();
+    const map = mapFor(dbPath);
+    expect(Object.keys(map).length).toBe(0);
+
+    await insertRow("testkey1", "127.0.0.1", 8080);
+    await pollUntil(() => "testkey1" in map, 10000);
+    expect(map["testkey1"].target.host).toBe("127.0.0.1");
+    expect(map["testkey1"].target.port).toBe(8080);
+
+    map._stop();
+  });
+
+  it("should detect deleted rows in a sqlite file", { timeout: 15000 }, async () => {
+    await createDb();
+    await insertRow("testkey2", "127.0.0.1", 9090);
+    const map = mapFor(dbPath);
+
+    await pollUntil(() => "testkey2" in map, 10000);
+    expect(map["testkey2"].target.port).toBe(9090);
+
+    await deleteRow("testkey2");
+    await pollUntil(() => !("testkey2" in map), 10000);
+
+    map._stop();
   });
 });
