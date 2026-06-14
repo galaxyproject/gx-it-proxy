@@ -42,7 +42,7 @@
     "eslint-config-strongloop": "^2.1.0",
     "globals": "^16.0.0",
     "prettier": "^3.5.3",
-    "vitest": "^3.1.1"
+    "vitest": "^4.1.8"
   },
   "overrides": {
     "glob": "11.0.1",
